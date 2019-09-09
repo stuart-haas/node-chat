@@ -1,0 +1,20 @@
+{
+  "name": "chat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bin/index.js",
+  "scripts": {
+    "build": "npm install",
+    "start": "node bin/index.js",
+    "watch": "nodemon -e css,ejs,js,json --watch bin"
+  },
+  "author": "Stuart Haas",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "moment": "^2.24.0",
+    "reload": "^3.0.1",
+    "socket.io": "^2.2.0"
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Node Chat</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <style>
+      .masthead {
+        padding: 3em 0;
+      }
+      .container {
+        position: relative;
+        height: 100%;
+      }
+      .bottom {
+        position: absolute;
+        bottom: 3em;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ui container">
+      <div class="masthead">
+        <h3 class="ui header">Node Chat</h3>
+      </div>
+      <div id="messages" class="ui comments"></div>
+      <div class="bottom">
+        <form class="ui form">
+          <div class="ui fluid action input">
+            <input id="message" type="text" autocomplete="off" autofocus="on" placeholder="Type your message...">
+            <button class="ui primary button">Send</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+    <script type="text/javascript">
+
+      var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
+      var socket = io.connect(url);
+
+      $('form').submit(function(e){
+        e.preventDefault();
+        socket.emit('message', $('#message').val());
+        $('#message').val('');
+        return false;
+      });
+
+      socket.on('message', function(response){
+        $('#messages').append(
+          '<div class="comment">' +
+            '<div class="content">' +
+              '<a class="author">'+response.username+'</a>' +
+              '<div class="metadata">' +
+                '<span class="date">Today at '+response.datetime+'</span>' +
+              '</div>' +
+              '<div class="text">' +
+                response.message +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+      });
+
+      socket.on('online', function(response) {
+        $('#messages').append(
+          '<div class="comment">' +
+            '<div class="content">' +
+              '<a class="author">'+response.username+' is online</a>' +
+            '</div>' +
+          '</div>'
+        );
+      });
+
+      socket.on('offline', function(response) {
+        $('#messages').append(
+          '<div class="comment">' +
+            '<div class="content">' +
+              '<a class="author">'+response.username+' is offline</a>' +
+            '</div>' +
+          '</div>'
+        );
+      });
+
+      var username = prompt('Please tell me your name');
+      socket.emit('username', username);
+      
+    </script>
+  </body>
+</html>
