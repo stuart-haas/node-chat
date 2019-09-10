@@ -2,37 +2,52 @@ $(function() {
 
   var url = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '');
   var socket = io.connect(url);
-  var timeout = null;
+  var timeout;
 
-  $.ajax({
-    type: 'get',
-    url: url + '/chats',
-    success: function(data) {
-      console.log(data);
-    }
-  })
+  function getMessages() {
+    $.ajax({
+      type: 'get',
+      url: url + '/messages',
+      success: function(response) {
+        if(response.length) {
+          for(i = 0; i < response.length; i ++) {
+            $('#messages').append(
+              '<div class="comment">' +
+                '<div class="content">' +
+                  '<a class="author">'+response[i].username+'</a>' +
+                  '<div class="metadata">' +
+                    '<span class="date timeago">'+response[i].datetime+'</span>' +
+                  '</div>' +
+                  '<div class="text">' +
+                    response[i].message +
+                  '</div>' +
+                '</div>' +
+              '</div>'
+            );
+          }
+          scrollToBottom();
+        }
+      },
+      error: function(err) {
+        console.log("An error occurred");
+      }
+    });
+  }
 
   function typing() {
     socket.emit('typing', false);
+    $('#info').empty();
+  }
+
+  function scrollToBottom() {
+    $('.ui.comments').scrollTop($('.ui.comments')[0].scrollHeight);
   }
 
   $('form').submit(function(e){
     e.preventDefault();
 
     var message =  $('#message').val();
-
-    $.ajax({
-      type: 'post', 
-      url: url + '/chats', 
-      data: { message: message },
-      success: function(data) {
-        socket.emit('message', data.message);
-        $('#message').val('');
-      },
-      error: function(err) {
-        console.log("An error occurred");
-      }
-    });
+    socket.emit('message', message);
 
     return false;
   });
@@ -45,34 +60,44 @@ $(function() {
 
   socket.on('typing', function(data){
     if(data) {
-    $('#info').html(
-      '<div class="comment">' +
-        '<div class="content">' +
-          '<div class="text">' +
-            data.message +
+      $('#info').html(
+        '<div class="comment">' +
+          '<div class="content">' +
+            '<div class="text">' +
+              data.username + data.message +
+            '</div>' +
           '</div>' +
-        '</div>' +
-      '</div>'
-    );
-    } else {
-      $('#info').empty();
+        '</div>'
+      );
     }
   });
 
   socket.on('message', function(data){
-    $('#messages').append(
-      '<div class="comment">' +
-        '<div class="content">' +
-          '<a class="author">'+data.username+'</a>' +
-          '<div class="metadata">' +
-            '<span class="date">Today at '+data.datetime+'</span>' +
-          '</div>' +
-          '<div class="text">' +
-            data.message +
-          '</div>' +
-        '</div>' +
-      '</div>'
-    );
+    $.ajax({
+      type: 'post', 
+      url: url + '/messages', 
+      data: data,
+      success: function(response) {
+        $('#message').val('');
+        $('#messages').append(
+          '<div class="comment">' +
+            '<div class="content">' +
+              '<a class="author">'+response.username+'</a>' +
+              '<div class="metadata">' +
+                '<span class="date timeago">'+response.datetime+'</span>' +
+              '</div>' +
+              '<div class="text">' +
+                response.message +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        );
+        scrollToBottom();
+      },
+      error: function(err) {
+        console.log("An error occurred");
+      }
+    });
   });
 
   socket.on('online', function(data) {
@@ -83,6 +108,7 @@ $(function() {
         '</div>' +
       '</div>'
     );
+    scrollToBottom();
   });
 
   socket.on('offline', function(data) {
@@ -93,9 +119,12 @@ $(function() {
         '</div>' +
       '</div>'
     );
+    scrollToBottom();
   });
 
   var username = prompt('Please tell me your name');
-  socket.emit('username', username);
+  socket.emit('join', username);
+
+  getMessages();
 
 });
