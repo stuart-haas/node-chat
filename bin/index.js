@@ -1,35 +1,57 @@
-var reload = require('reload');
-var express = require('express');
-var app = express();
-var moment = require('moment');
+const express = require('express');
+const app = express();
+const router = express.Router();
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const helmet = require('helmet');
+const mongoose = require('mongoose');
+const request = require('request');
+const simpleDateTimeFormater = require('simple-datetime-formater');
+const reload = require('reload');
+
+const indexRouter = require('./routes/index.route');
+const chatRouter = require('./routes/chat.route');
 
 app.set('port', process.env.PORT || 3000);
 app.set('view engine', 'ejs');
 app.set('views', 'bin/views');
 app.use(express.static('bin'));
+app.use(cors());
+app.use(helmet());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(router);
 
-app.get('/', function(req, res) {
-  res.render('index');
-});
+app.use(indexRouter);
+app.use('/chats', chatRouter);
 
-var server = app.listen(app.get('port'), (req, res) => {
+const server = app.listen(app.get('port'), (req, res) => {
   console.log('listening on port ' + app.get('port'));
 });
 
-var io = require('socket.io').listen(server);
+const io = require('socket.io').listen(server);
 
-io.sockets.on('connection', function(socket) {
+io.sockets.on('connection', (socket) => {
   socket.on('username', function(username) {
       socket.username = username;
       io.emit('online', {username: socket.username});
   });
 
-  socket.on('disconnect', function(username) {
+  socket.on('disconnect', () => {
     io.emit('offline', {username: socket.username});
   });
 
-  socket.on('message', function(message) {
-      io.emit('message', {username: socket.username, message: message, datetime: moment(new Date()).format('hh:mm A')});
+  socket.on('message', (message) => {
+    io.emit('message', {username: socket.username, message: message, datetime: 
+      simpleDateTimeFormater.formatTimeAgo(new Date())});
+  });
+
+  socket.on('typing', (data) => {
+    if(data) {
+      io.emit('typing', {message: socket.username + ' is typing...'});
+    } else {
+      io.emit('typing');
+    }
   });
 });
 
