@@ -21,15 +21,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(router);
 
 let db_dev = 'mongodb://localhost:27017/node-chat';
-let db_prod = 'mongodb+srv://admin:2qjwXKgVNx6SL9rh@cluster0-wvkpp.mongodb.net/test?retryWrites=true&w=majority';
+let db_prod = 'mongodb://admin:sArDZFh2WL_tE.N@ds011308.mlab.com:11308/node-chat';
 
-/*mongoose.connect(db_prod, { 
+mongoose.connect(db_prod, { 
   useNewUrlParser: true, useUnifiedTopology: true 
 });
 
 mongoose.connection.on('connected', function(){
   console.log("Database connected");
-});*/
+});
 
 app.use(indexRouter);
 app.use('/messages', messageRouter);
