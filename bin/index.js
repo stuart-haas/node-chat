@@ -28,8 +28,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(router);
 
-let mdb = 'mongodb://localhost:27017/node-chat';
-//let mdb = 'mongodb://admin:sArDZFh2WL_tE.N@ds011308.mlab.com:11308/node-chat';
+//let mdb = 'mongodb://localhost:27017/node-chat';
+let mdb = 'mongodb://admin:sArDZFh2WL_tE.N@ds011308.mlab.com:11308/node-chat';
 
 mongoose.connect(mdb, { 
   useNewUrlParser: true, useUnifiedTopology: true 
