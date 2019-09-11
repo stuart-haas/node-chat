@@ -34,9 +34,8 @@ $(function() {
     });
   }
 
-  function typing() {
-    socket.emit('typing', false);
-    $('#info').empty();
+  function typing(data) {
+    socket.emit('typing', data);
   }
 
   function scrollToBottom() {
@@ -48,14 +47,15 @@ $(function() {
 
     var message =  $('#message').val();
     socket.emit('message', message);
+    $('#message').val('');
 
     return false;
   });
 
   $('#message').on('keyup', function(e) {
-    socket.emit('typing', $('#message').val());
+    typing($('#message').val());
     clearTimeout(timeout);
-    timeout = setTimeout(typing, 1000);
+    timeout = setTimeout(typing, 1000, false);
   });
 
   socket.on('typing', function(data){
@@ -69,6 +69,8 @@ $(function() {
           '</div>' +
         '</div>'
       );
+    } else {
+      $('#info').empty();
     }
   });
 
@@ -78,7 +80,6 @@ $(function() {
       url: url + '/messages', 
       data: data,
       success: function(response) {
-        $('#message').val('');
         $('#messages').append(
           '<div class="comment">' +
             '<div class="content">' +

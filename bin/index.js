@@ -20,10 +20,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(router);
 
-let db_dev = 'mongodb://localhost:27017/node-chat';
-let db_prod = 'mongodb://admin:sArDZFh2WL_tE.N@ds011308.mlab.com:11308/node-chat';
+//let db = 'mongodb://localhost:27017/node-chat';
+let db = 'mongodb://admin:sArDZFh2WL_tE.N@ds011308.mlab.com:11308/node-chat';
 
-mongoose.connect(db_prod, { 
+mongoose.connect(db, { 
   useNewUrlParser: true, useUnifiedTopology: true 
 });
 
@@ -55,11 +55,7 @@ io.sockets.on('connection', (socket) => {
   });
 
   socket.on('typing', (data) => {
-    if(data) {
-      io.emit('typing', {username: socket.username, message: ' is typing...'});
-    } else {
-      io.emit('typing');
-    }
+    socket.broadcast.emit('typing', data ? {username: socket.username, message: ' is typing...'} : false);
   });
 });
 
