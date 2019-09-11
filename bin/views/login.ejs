@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head><% include partials/templates/head.ejs %></head>
+  <body>
+    <div class="ui container">
+      <div class="ui flex center">
+        <form id="login-form" class="ui form" method="post">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Username">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+          <button class="ui primary button" formaction="/user/login">Login</button>
+          <div class="ui divider"></div>
+          <a href="/user/register" class="vertical padding ">Register</a>
+        </form>
+      </div>
+    </div>
+    <% include partials/templates/jsdefaults.ejs %>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head><% include partials/templates/head.ejs %></head>
+  <body>
+    <div class="ui container">
+      <div class="ui flex center">
+        <form id="register-form" class="ui form" method="post">
+          <div class="field">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Username">
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+          <div class="field">
+            <label>Confirm Password</label>
+            <input type="password" name="passwordConfirm" placeholder="Confirm Password">
+          </div>
+          <button type="submit" class="ui primary button" formaction="/user/register">Register</button>
+        </form>
+      </div>
+    </div>
+    <% include partials/templates/jsdefaults.ejs %>
+  </body>
+</html>

@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const timeago = require('timeago.js');
+const Session = require('../models/session.model');
+const Message = require('../models/message.model');
 
-let Message = require('../models/message.model');
-
-router.get('/', (req, res) => {
+router.get('/', Session.requireLogin, (req, res) => {
   Message.find(function (err, messages){
     if(err){
       console.log(err);
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/', (req, res) => {
+router.post('/', Session.requireLogin, (req, res) => {
   var message = new Message({
     message: req.body.message,
     username: req.body.username
