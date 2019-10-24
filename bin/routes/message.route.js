@@ -5,9 +5,9 @@ const Session = require('../models/session.model');
 const Message = require('../models/message.model');
 
 router.get('/', Session.requireLogin, (req, res) => {
-  Message.find(function (err, messages){
-    if(err){
-      console.log(err);
+  Message.find((error, messages) => {
+    if(error){
+      console.log(error);
     }
     else {
       messages = messages.map((item) => formatDate(item));
@@ -19,7 +19,7 @@ router.get('/', Session.requireLogin, (req, res) => {
 router.post('/', Session.requireLogin, (req, res) => {
   var message = new Message({
     message: req.body.message,
-    username: req.body.username
+    userId: req.body.userId
   });
 
   message.save()
@@ -27,16 +27,16 @@ router.post('/', Session.requireLogin, (req, res) => {
       message = formatDate(message);
       res.status(200).json(message);
     })
-    .catch(err => {
-      res.status(400).send("Unable to save to database");
+    .catch(error => {
+      res.status(400).send(error);
     });
 });
 
 function formatDate(item) {
   var datetime = timeago.format(item.created_at);
-  let modItem = JSON.parse(JSON.stringify(item));
-  modItem.datetime = datetime;
-  return modItem;
+  let itemClone = JSON.parse(JSON.stringify(item));
+  itemClone.datetime = datetime;
+  return itemClone;
 };
 
 module.exports = router;

@@ -34,7 +34,7 @@ function getMessages() {
         scrollToBottom();
       }
     },
-    error: function(err) {
+    error: function(error) {
       console.log("An error occurred");
     }
   });
@@ -103,8 +103,8 @@ socket.on('message', function(data){
       );
       scrollToBottom();
     },
-    error: function(err) {
-      console.log("An error occurred");
+    error: function(error) {
+      console.log(error);
     }
   });
 });
@@ -121,14 +121,14 @@ socket.on('join', function(data) {
 });
 
 socket.on('disconnect', function(data) {
-  $messageList.append(
+  /*$messageList.append(
     '<div class="comment">' +
       '<div class="content">' +
         '<a class="author">'+data.username+' is offline</a>' +
       '</div>' +
     '</div>'
   );
-  scrollToBottom();
+  scrollToBottom();*/
 });
 
 getMessages();

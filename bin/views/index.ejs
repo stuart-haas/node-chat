@@ -7,7 +7,7 @@
         <div class="ui grid">
           <div class="two column row">
             <div class="left floated column">
-              <h3 class="ui header">Node Chat</h3>
+              <h3 class="ui header">Node Chat <%= user.username %></h3>
             </div>
             <div class="right floated column right aligned">
               <a href="/user/logout" class="ui primary button">Logout</a>
@@ -25,11 +25,5 @@
       <span id="info" class="ui info"></span>
     </div>
     <% include partials/templates/jsdefaults.ejs %>
-    <script>
-      var username = '<%= user.username %>';
-      if(typeof username != 'undefined') {
-        join(username);
-      }
-    </script>
   </body>
 </html>
